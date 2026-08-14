@@ -7,9 +7,8 @@ import android.os.Build
 import android.util.Log
 
 /**
- * Receives a broadcast when OverlayService is destroyed
- * and immediately restarts it so it's ready for next transaction.
- * Also handles BOOT_COMPLETED so service starts after phone reboot.
+ * Starts OverlayService (which hosts SmsObserver) on boot,
+ * app update, and quick-boot so the ContentObserver is always watching.
  */
 class ServiceRestarter : BroadcastReceiver() {
 
@@ -17,11 +16,19 @@ class ServiceRestarter : BroadcastReceiver() {
         Log.d("ExpenseTracker", "ServiceRestarter fired: ${intent.action}")
 
         when (intent.action) {
-            "com.example.expensetracker.RESTART_SERVICE",
             Intent.ACTION_BOOT_COMPLETED,
             Intent.ACTION_MY_PACKAGE_REPLACED,
             "android.intent.action.QUICKBOOT_POWERON" -> {
-                Log.d("ExpenseTracker", "Restarting services after: ${intent.action}")
+                Log.d("ExpenseTracker", "Starting OverlayService after: ${intent.action}")
+                val svc = Intent(context, OverlayService::class.java)
+                try {
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
+                        context.startForegroundService(svc)
+                    else
+                        context.startService(svc)
+                } catch (e: Exception) {
+                    Log.e("ExpenseTracker", "Failed to start service on boot", e)
+                }
             }
         }
     }

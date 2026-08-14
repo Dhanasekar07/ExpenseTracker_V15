@@ -49,18 +49,6 @@ class MainActivity : AppCompatActivity() {
         // Set layout
         setContentView(R.layout.activity_main)
 
-        // Request battery optimization exemption (silent — one-time system dialog)
-        requestBatteryOptimization()
-
-        // Keep OverlayService alive so SmsReceiver always fires
-        try {
-            val svc = Intent(this, OverlayService::class.java)
-            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O)
-                startForegroundService(svc)
-            else
-                startService(svc)
-        } catch (e: Exception) { e.printStackTrace() }
-
         // Bind views
         db                   = ExpenseDbHelper(this)
         tvGreeting           = findViewById(R.id.tvGreeting)
@@ -89,6 +77,16 @@ class MainActivity : AppCompatActivity() {
     override fun onResume() {
         super.onResume()
         if (!AppPreferences.isOnboarded(this)) return
+
+        // Start OverlayService (hosts SmsObserver) — safe after permissions granted
+        try {
+            val svc = Intent(this, OverlayService::class.java)
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O)
+                startForegroundService(svc)
+            else
+                startService(svc)
+        } catch (e: Exception) { e.printStackTrace() }
+
         try {
             setupGreeting()
             refreshDashboard()
@@ -295,39 +293,5 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun requestBatteryOptimization() {
-        try {
-            val pm = getSystemService(android.content.Context.POWER_SERVICE) as android.os.PowerManager
-            if (!pm.isIgnoringBatteryOptimizations(packageName)) {
-                startActivity(Intent(
-                    android.provider.Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS,
-                    android.net.Uri.parse("package:$packageName")
-                ))
-            }
 
-            val manufacturer = android.os.Build.MANUFACTURER.lowercase()
-            if (manufacturer in listOf("samsung", "xiaomi", "redmi", "poco", "oppo", "vivo", "realme", "oneplus", "huawei")) {
-                val prefs = getSharedPreferences("expense_tracker_prefs", MODE_PRIVATE)
-                if (!prefs.getBoolean("battery_guide_shown", false)) {
-                    prefs.edit().putBoolean("battery_guide_shown", true).apply()
-                    android.os.Handler(android.os.Looper.getMainLooper()).postDelayed({
-                        try {
-                            android.app.AlertDialog.Builder(this)
-                                .setTitle("Keep app running")
-                                .setMessage("To detect payments reliably, please enable 'Allow Background Activity' on the next screen.\n\nGo to Battery → Allow Background Activity → Enable")
-                                .setPositiveButton("Open Settings") { _, _ ->
-                                    try {
-                                        startActivity(Intent(android.provider.Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
-                                            data = android.net.Uri.parse("package:$packageName")
-                                        })
-                                    } catch (e: Exception) { e.printStackTrace() }
-                                }
-                                .setNegativeButton("Later", null)
-                                .show()
-                        } catch (e: Exception) { e.printStackTrace() }
-                    }, 1500)
-                }
-            }
-        } catch (e: Exception) { e.printStackTrace() }
-    }
 }
