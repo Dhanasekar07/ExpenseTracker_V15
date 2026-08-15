@@ -7,7 +7,9 @@ import android.app.NotificationManager
 import android.app.Service
 import android.content.Context
 import android.content.Intent
+import android.database.ContentObserver
 import android.graphics.Color
+import android.net.Uri
 import android.graphics.PixelFormat
 import android.graphics.Typeface
 import android.graphics.drawable.GradientDrawable
@@ -30,6 +32,7 @@ class OverlayService : Service() {
     private var overlayView : View?          = null
     private var db          : ExpenseDbHelper? = null
     private var timerAnim   : ObjectAnimator? = null
+    private var smsObserver : SmsObserver?   = null
 
     private var currentAmount  = 0.0
     private var currentSource  = ""
@@ -52,6 +55,7 @@ class OverlayService : Service() {
         db = ExpenseDbHelper(this)
         wm = getSystemService(Context.WINDOW_SERVICE) as WindowManager
         goForeground()
+        registerSmsObserver()
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
@@ -75,11 +79,17 @@ class OverlayService : Service() {
         return START_STICKY
     }
 
-    override fun onDestroy() { dismissCurrent(); queue.clear(); db?.close(); super.onDestroy() }
+    override fun onDestroy() {
+        unregisterSmsObserver()
+        dismissCurrent(); queue.clear(); db?.close(); super.onDestroy()
+    }
     override fun onBind(intent: Intent?): IBinder? = null
 
     private fun showNext() {
-        if (queue.isEmpty()) { stopSelf(); return }
+        if (queue.isEmpty()) {
+            Log.d(TAG, "Queue empty — staying alive for SmsObserver")
+            return
+        }
         val next = queue.removeFirst()
         currentAmount = next.amount; currentSource = next.source; currentChannel = next.channel
         Log.d(TAG, "Next from queue: amount=$currentAmount (remaining=${queue.size})")
@@ -312,4 +322,33 @@ class OverlayService : Service() {
     }
 
     private fun dp(v: Float) = v * resources.displayMetrics.density
+
+    // ── SMS ContentObserver ─────────────────────────────────────────────────
+    private fun registerSmsObserver() {
+        try {
+            val observer = SmsObserver(this, handler)
+            observer.seedLastId()  // Don't re-fire on existing SMS
+            contentResolver.registerContentObserver(
+                SmsObserver.OBSERVE_URI,
+                true,
+                observer
+            )
+            smsObserver = observer
+            Log.d(TAG, "SmsObserver registered — watching inbox")
+        } catch (e: Exception) {
+            Log.e(TAG, "SmsObserver registration failed", e)
+        }
+    }
+
+    private fun unregisterSmsObserver() {
+        smsObserver?.let {
+            try {
+                contentResolver.unregisterContentObserver(it)
+                Log.d(TAG, "SmsObserver unregistered")
+            } catch (e: Exception) {
+                Log.e(TAG, "SmsObserver unregister failed", e)
+            }
+        }
+        smsObserver = null
+    }
 }

@@ -5,7 +5,6 @@ import android.graphics.Color
 import android.os.Bundle
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.app.AppCompatDelegate
 
 class SettingsActivity : AppCompatActivity() {
 
@@ -15,13 +14,11 @@ class SettingsActivity : AppCompatActivity() {
 
         val btnBack     = findViewById<android.widget.ImageView>(R.id.btnBack)
         val etUsername  = findViewById<EditText>(R.id.etUsername)
-        val switchNight = findViewById<Switch>(R.id.switchNightMode)
         val etMin       = findViewById<EditText>(R.id.etMinAmount)
         val etMax       = findViewById<EditText>(R.id.etMaxAmount)
 
         // Load saved values
         etUsername.setText(AppPreferences.getUsername(this))
-        switchNight.isChecked = AppPreferences.isNightMode(this)
         etMin.setText(AppPreferences.getMinAmount(this).toInt().toString())
         val maxAmt = AppPreferences.getMaxAmount(this)
         if (maxAmt > 0) etMax.setText(maxAmt.toInt().toString())
@@ -33,14 +30,6 @@ class SettingsActivity : AppCompatActivity() {
                 val name = etUsername.text.toString().trim()
                 if (name.isNotEmpty()) AppPreferences.setUsername(this, name)
             }
-        }
-
-        switchNight.setOnCheckedChangeListener { _, isChecked ->
-            AppPreferences.setNightMode(this, isChecked)
-            AppCompatDelegate.setDefaultNightMode(
-                if (isChecked) AppCompatDelegate.MODE_NIGHT_YES
-                else           AppCompatDelegate.MODE_NIGHT_NO
-            )
         }
 
         etMin.setOnFocusChangeListener { _, hasFocus ->
@@ -58,12 +47,12 @@ class SettingsActivity : AppCompatActivity() {
         tvPopupVal.text = currentMax.toString()
         seekPopup.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
             override fun onProgressChanged(sb: SeekBar?, progress: Int, fromUser: Boolean) {
-                val value = progress.coerceIn(2, 10)
+                val value = progress.coerceIn(2, 9)
                 tvPopupVal.text = value.toString()
             }
             override fun onStartTrackingTouch(sb: SeekBar?) {}
             override fun onStopTrackingTouch(sb: SeekBar?) {
-                val value = (sb?.progress ?: 4).coerceIn(2, 10)
+                val value = (sb?.progress ?: 4).coerceIn(2, 9)
                 AppPreferences.setPopupMaxCategories(this@SettingsActivity, value)
             }
         })

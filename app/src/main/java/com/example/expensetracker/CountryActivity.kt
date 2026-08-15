@@ -33,18 +33,8 @@ class CountryActivity : AppCompatActivity() {
             AppPreferences.setCountry(this, selectedCountry.name)
             AppPreferences.setCurrencySymbol(this, selectedCountry.symbol)
 
-            // 2. Mark onboarding done
-            AppPreferences.setOnboarded(this)
-
-            // 3. Initialize categories
-            try {
-                CategoryManager.initialize(this)
-            } catch (e: Exception) {
-                e.printStackTrace()
-            }
-
-            // 4. Navigate to MainActivity — clear ALL back stack
-            val intent = Intent(this, MainActivity::class.java)
+            // 2. Navigate to Permissions page
+            val intent = Intent(this, PermissionsActivity::class.java)
             intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or
                            Intent.FLAG_ACTIVITY_CLEAR_TASK
             startActivity(intent)
