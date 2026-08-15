@@ -1,27 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
-    android:width="64dp"
-    android:height="64dp"
-    android:viewportWidth="64"
-    android:viewportHeight="64">
-    <!-- Background window -->
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="84"
+    android:viewportHeight="70">
     <path
-        android:fillColor="#E8F5E9"
-        android:strokeColor="#2E7D32"
+        android:strokeColor="#212121"
+        android:strokeWidth="3.5"
+        android:fillColor="#00000000"
+        android:pathData="M16,0 h68 a5,5 0,0 1,5 5 v40 a5,5 0,0 1,-5 5 h-68 a5,5 0,0 1,-5 -5 v-40 a5,5 0,0 1,5 -5 z"/>
+    <path
+        android:strokeColor="#212121"
+        android:strokeWidth="3.5"
+        android:fillColor="#FFFFFF"
+        android:pathData="M0,16 h68 a5,5 0,0 1,5 5 v40 a5,5 0,0 1,-5 5 h-68 a5,5 0,0 1,-5 -5 v-40 a5,5 0,0 1,5 -5 z"/>
+    <path
+        android:strokeColor="#212121"
+        android:strokeWidth="2.5"
+        android:strokeLineCap="round"
+        android:fillColor="#00000000"
+        android:pathData="M10,30 L58,30"/>
+    <path
+        android:strokeColor="#66212121"
         android:strokeWidth="2"
-        android:pathData="M8,16 L56,16 L56,52 L8,52 Z"/>
-    <!-- Foreground floating window -->
+        android:strokeLineCap="round"
+        android:fillColor="#00000000"
+        android:pathData="M10,40 L42,40"/>
     <path
-        android:fillColor="#2E7D32"
-        android:pathData="M20,8 L56,8 L56,36 L20,36 Z"/>
-    <!-- Text lines on floating window -->
-    <path
-        android:fillColor="#FFFFFF"
-        android:pathData="M26,16 L50,16 L50,18 L26,18 Z"/>
-    <path
-        android:fillColor="#FFFFFF"
-        android:pathData="M26,22 L44,22 L44,24 L26,24 Z"/>
-    <path
-        android:fillColor="#FFFFFF"
-        android:pathData="M26,28 L40,28 L40,30 L26,30 Z"/>
+        android:strokeColor="#66212121"
+        android:strokeWidth="2"
+        android:strokeLineCap="round"
+        android:fillColor="#00000000"
+        android:pathData="M10,48 L34,48"/>
 </vector>
