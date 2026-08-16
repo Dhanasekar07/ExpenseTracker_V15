@@ -169,7 +169,7 @@ class PermissionsActivity : AppCompatActivity() {
     }
 
     private fun proceedAfterSms() {
-        else if (!isOverlayGranted()) requestOverlay()
+        if (!isOverlayGranted()) requestOverlay()
         else if (!isBatteryExempt()) requestBattery()
         else goToMain()
     }
