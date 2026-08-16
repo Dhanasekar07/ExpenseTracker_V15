@@ -47,7 +47,7 @@
 
             <ImageView
                 android:id="@+id/iconSms"
-                android:layout_width="36dp"
+                android:layout_width="32dp"
                 android:layout_height="36dp"
                 android:src="@drawable/ic_sms_perm"
                 android:layout_marginEnd="14dp"/>
@@ -105,73 +105,7 @@
         </LinearLayout>
 
         <!-- Permission 2: Notification Listener -->
-        <LinearLayout
-            android:id="@+id/permNotif"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:gravity="center_vertical"
-            android:layout_marginBottom="20dp">
-
-            <ImageView
-                android:id="@+id/iconNotif"
-                android:layout_width="36dp"
-                android:layout_height="36dp"
-                android:src="@drawable/ic_notification"
-                android:layout_marginEnd="14dp"/>
-
-            <LinearLayout
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:orientation="vertical">
-
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:gravity="center_vertical"
-                    android:layout_marginBottom="2dp">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Notification access"
-                        android:textSize="15sp"
-                        android:textStyle="bold"
-                        android:textColor="#212121"/>
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="MANDATORY"
-                        android:textSize="9sp"
-                        android:textStyle="bold"
-                        android:textColor="#9E9E9E"
-                        android:background="@drawable/bg_mandatory_tag"
-                        android:paddingStart="6dp"
-                        android:paddingEnd="6dp"
-                        android:paddingTop="2dp"
-                        android:paddingBottom="2dp"
-                        android:layout_marginStart="8dp"/>
-                </LinearLayout>
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="to read payment notifications from bank apps"
-                    android:textSize="12sp"
-                    android:textColor="#757575"/>
-            </LinearLayout>
-
-            <ImageView
-                android:id="@+id/checkNotif"
-                android:layout_width="28dp"
-                android:layout_height="28dp"
-                android:src="@drawable/ic_check_grey"
-                android:layout_marginStart="8dp"/>
-        </LinearLayout>
-
+        
         <!-- Permission 3: Overlay -->
         <LinearLayout
             android:id="@+id/permOverlay"
@@ -183,8 +117,8 @@
 
             <ImageView
                 android:id="@+id/iconOverlay"
-                android:layout_width="36dp"
-                android:layout_height="36dp"
+                android:layout_width="24dp"
+                android:layout_height="30dp"
                 android:src="@drawable/ic_overlay"
                 android:layout_marginEnd="14dp"/>
 
@@ -250,7 +184,7 @@
 
             <ImageView
                 android:id="@+id/iconBattery"
-                android:layout_width="36dp"
+                android:layout_width="24dp"
                 android:layout_height="36dp"
                 android:src="@drawable/ic_battery_perm"
                 android:layout_marginEnd="14dp"/>
@@ -302,7 +236,7 @@
             <ImageView
                 android:id="@+id/checkBattery"
                 android:layout_width="28dp"
-                android:layout_height="28dp"
+                android:layout_height="24dp"
                 android:src="@drawable/ic_check_grey"
                 android:layout_marginStart="8dp"/>
         </LinearLayout>
