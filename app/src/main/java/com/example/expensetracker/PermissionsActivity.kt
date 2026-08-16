@@ -60,11 +60,6 @@ class PermissionsActivity : AppCompatActivity() {
                 if (isSmsGranted()) proceedAfterSms()
                 else showSmsSettingsDialog()
             }
-            "notif" -> {
-                waitingFor = ""
-                refreshChecks()
-                if (isNotifGranted()) proceedAfterNotif()
-            }
             "overlay" -> {
                 waitingFor = ""
                 refreshChecks()
@@ -84,7 +79,6 @@ class PermissionsActivity : AppCompatActivity() {
     private fun startSequentialGrant() {
         when {
             !isSmsGranted()     -> requestSms()
-            !isNotifGranted()   -> requestNotifListener()
             !isOverlayGranted() -> showOverlayDialog()
             !isBatteryExempt()  -> requestBattery()
             else                -> goToMain()
@@ -201,21 +195,21 @@ class PermissionsActivity : AppCompatActivity() {
 
     // ── Notification Listener (opens Settings) ──────────────────────────
 
-    private fun requestNotifListener() {
-        if (isNotifGranted()) {
-            refreshChecks()
-            proceedAfterNotif()
-            return
-        }
-        waitingFor = "notif"
-        startActivity(Intent(Settings.ACTION_NOTIFICATION_LISTENER_SETTINGS))
-    }
+    // private fun requestNotifListener() {
+    //     if (isNotifGranted()) {
+    //         refreshChecks()
+    //         proceedAfterNotif()
+    //         return
+    //     }
+    //     waitingFor = "notif"
+    //     startActivity(Intent(Settings.ACTION_NOTIFICATION_LISTENER_SETTINGS))
+    // }
 
-    private fun proceedAfterNotif() {
-        if (!isOverlayGranted()) showOverlayDialog()
-        else if (!isBatteryExempt()) requestBattery()
-        else goToMain()
-    }
+    // private fun proceedAfterNotif() {
+    //     if (!isOverlayGranted()) showOverlayDialog()
+    //     else if (!isBatteryExempt()) requestBattery()
+    //     else goToMain()
+    // }
 
     // ── Overlay (opens Settings) ────────────────────────────────────────
 
@@ -328,10 +322,10 @@ class PermissionsActivity : AppCompatActivity() {
         ContextCompat.checkSelfPermission(this, Manifest.permission.READ_SMS) ==
             PackageManager.PERMISSION_GRANTED
 
-    private fun isNotifGranted(): Boolean {
-        val flat = Settings.Secure.getString(contentResolver, "enabled_notification_listeners")
-        return flat?.contains(packageName) == true
-    }
+    // private fun isNotifGranted(): Boolean {
+    //     val flat = Settings.Secure.getString(contentResolver, "enabled_notification_listeners")
+    //     return flat?.contains(packageName) == true
+    // }
 
     private fun isOverlayGranted(): Boolean = Settings.canDrawOverlays(this)
 
@@ -341,7 +335,7 @@ class PermissionsActivity : AppCompatActivity() {
     }
 
     private fun allGranted(): Boolean =
-        isSmsGranted() && isNotifGranted() && isOverlayGranted() && isBatteryExempt()
+        isSmsGranted() && isOverlayGranted() && isBatteryExempt()
 
     // ── UI Updates ──────────────────────────────────────────────────────
 
