@@ -147,44 +147,29 @@ class PermissionsActivity : AppCompatActivity() {
     }
 
     private fun showSmsSettingsDialog() {
+        val view = layoutInflater.inflate(R.layout.dialog_permission, null)
+        view.findViewById<TextView>(R.id.dialogTitle).text = "SMS Permission"
+        view.findViewById<TextView>(R.id.dialogMessage).text =
+            "Allow Expense Tracker to read SMS messages to detect payment transactions."
+    
         val dialog = AlertDialog.Builder(this, android.R.style.Theme_DeviceDefault_Dialog)
-            .setTitle("SMS Permission")
-            .setMessage("Allow Expense Tracker to read SMS messages to detect payment transactions.")
+            .setView(view)
             .setCancelable(false)
-            .setPositiveButton("Go to Settings") { _, _ ->
-                waitingFor = "sms_settings"
-                startActivity(Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
-                    data = Uri.parse("package:$packageName")
-                })
-            }
-            .show()
-
-        // Increase width
+            .create()
+    
+        view.findViewById<Button>(R.id.dialogButton).setOnClickListener {
+            waitingFor = "sms_settings"
+            dialog.dismiss()
+            startActivity(Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
+                data = Uri.parse("package:$packageName")
+            })
+        }
+    
+        dialog.show()
         dialog.window?.setLayout(
             (resources.displayMetrics.widthPixels * 0.90).toInt(),
             android.view.WindowManager.LayoutParams.WRAP_CONTENT
         )
-
-        dialog.window?.decorView?.post {
-            // Center title — change parent's gravity too
-            val titleView = dialog.findViewById<TextView>(android.R.id.title)
-            titleView?.gravity = android.view.Gravity.CENTER
-            titleView?.textAlignment = android.view.View.TEXT_ALIGNMENT_CENTER
-            (titleView?.parent as? android.widget.LinearLayout)?.gravity = android.view.Gravity.CENTER
-        
-            // Center message
-            val messageView = dialog.findViewById<TextView>(android.R.id.message)
-            messageView?.gravity = android.view.Gravity.CENTER
-            messageView?.textAlignment = android.view.View.TEXT_ALIGNMENT_CENTER
-        
-            // Center button — find the button bar
-            val btn = dialog.getButton(AlertDialog.BUTTON_POSITIVE)
-            btn?.setTextColor(android.graphics.Color.WHITE)
-            // Try parent and grandparent
-            (btn?.parent as? android.widget.LinearLayout)?.gravity = android.view.Gravity.CENTER
-            (btn?.parent?.parent as? android.widget.LinearLayout)?.gravity = android.view.Gravity.CENTER
-        }
-        
     }
 
     private fun proceedAfterSms() {
