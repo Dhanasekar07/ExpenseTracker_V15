@@ -151,7 +151,7 @@ class PermissionsActivity : AppCompatActivity() {
         val view: android.view.View = layoutInflater.inflate(R.layout.dialog_permission, null)
         (view.findViewById(R.id.dialogTitle) as TextView).text = "SMS Permission"
         (view.findViewById(R.id.dialogMessage) as TextView).text =
-            "Allow Expense Tracker to read SMS messages to detect payment transactions."
+            "Allow Expense Tracker to read SMS messages to detect payment transactions"
     
         val dialog = AlertDialog.Builder(this, android.R.style.Theme_DeviceDefault_Dialog)
             .setView(view as android.view.View)
@@ -205,34 +205,33 @@ class PermissionsActivity : AppCompatActivity() {
             proceedAfterOverlay()
             return
         }
-        val dialog = AlertDialog.Builder(this, android.R.style.Theme_DeviceDefault_Dialog)
-            .setTitle("Display Over Other Apps")
-            .setMessage("Allow Expense Tracker to display over other apps to show the category popup after payments.")
-            .setCancelable(false)
-            .setPositiveButton("Go to Settings") { _, _ ->
-                waitingFor = "overlay"
-                startActivity(Intent(
-                    Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
-                    Uri.parse("package:$packageName")
-                ))
-            }
-            .show()
+
+        val view: android.view.View = layoutInflater.inflate(R.layout.dialog_permission, null)
+        (view.findViewById(R.id.dialogTitle) as TextView).text = "Display Over Other Apps"
+        (view.findViewById(R.id.dialogMessage) as TextView).text =
+            "Allow Expense Tracker to display over other apps to show the category popup after payments"
     
+        val dialog = AlertDialog.Builder(this, android.R.style.Theme_DeviceDefault_Dialog)
+            .setView(view as android.view.View)
+            .setCancelable(false)
+            .create()
+    
+        (view.findViewById(R.id.dialogButton) as Button).setOnClickListener {
+            waitingFor = "overlay"
+            dialog.dismiss()
+            startActivity(Intent(
+                Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
+                Uri.parse("package:$packageName")
+            ))
+        }
+    
+        dialog.show()
         dialog.window?.setLayout(
             (resources.displayMetrics.widthPixels * 0.90).toInt(),
             android.view.WindowManager.LayoutParams.WRAP_CONTENT
         )
-    
-        val titleView = dialog.findViewById<TextView>(android.R.id.title)
-        titleView?.gravity = android.view.Gravity.CENTER
-    
-        val messageView = dialog.findViewById<TextView>(android.R.id.message)
-        messageView?.gravity = android.view.Gravity.CENTER
-    
-        val btn = dialog.getButton(AlertDialog.BUTTON_POSITIVE)
-        btn?.setTextColor(android.graphics.Color.WHITE)
-        (btn?.parent as? android.widget.LinearLayout)?.gravity = android.view.Gravity.CENTER
     }
+    
     private fun proceedAfterOverlay() {
         if (!isBatteryExempt()) requestBattery()
         else goToMain()
@@ -246,55 +245,37 @@ class PermissionsActivity : AppCompatActivity() {
             proceedAfterBattery()
             return
         }
-        val dialog = AlertDialog.Builder(this, android.R.style.Theme_DeviceDefault_Dialog)
-            .setTitle("Battery Optimization")
-            .setMessage("Allow Expense Tracker to run in the background to keep tracking payments.")
-            .setCancelable(false)
-            .setPositiveButton("Allow") { _, _ ->
-                waitingFor = "battery"
-                try {
-                    startActivity(Intent(
-                        Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS,
-                        Uri.parse("package:$packageName")
-                    ))
-                } catch (e: Exception) {
-                    waitingFor = ""
-                    proceedAfterBattery()
-                }
-            }
-            .show()
 
-        // Increase width
+        val view: android.view.View = layoutInflater.inflate(R.layout.dialog_permission, null)
+        (view.findViewById(R.id.dialogTitle) as TextView).text = "Battery Optimization"
+        (view.findViewById(R.id.dialogMessage) as TextView).text =
+            "Allow Expense Tracker to run in the background to keep tracking payments"
+        (view.findViewById(R.id.dialogButton) as Button).text = "Allow"
+    
+        val dialog = AlertDialog.Builder(this, android.R.style.Theme_DeviceDefault_Dialog)
+            .setView(view as android.view.View)
+            .setCancelable(false)
+            .create()
+    
+        (view.findViewById(R.id.dialogButton) as Button).setOnClickListener {
+            waitingFor = "battery"
+            dialog.dismiss()
+            try {
+                startActivity(Intent(
+                    Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS,
+                    Uri.parse("package:$packageName")
+                ))
+            } catch (e: Exception) {
+                waitingFor = ""
+                proceedAfterBattery()
+            }
+        }
+    
+        dialog.show()
         dialog.window?.setLayout(
             (resources.displayMetrics.widthPixels * 0.90).toInt(),
             android.view.WindowManager.LayoutParams.WRAP_CONTENT
         )
-
-        // Center title
-        val titleView = dialog.findViewById<TextView>(android.R.id.title)
-        titleView?.gravity = android.view.Gravity.CENTER
-    
-        // Center message
-        val messageView = dialog.findViewById<TextView>(android.R.id.message)
-        messageView?.gravity = android.view.Gravity.CENTER
-    
-        // Center and style button
-        val btn = dialog.getButton(AlertDialog.BUTTON_POSITIVE)
-        btn?.setTextColor(android.graphics.Color.WHITE)
-        (btn?.parent as? android.widget.LinearLayout)?.gravity = android.view.Gravity.CENTER
-            
-        //    Commented Older Code
-        // waitingFor = "battery"
-        // try {
-        //     startActivity(Intent(
-        //         Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS,
-        //         Uri.parse("package:$packageName")
-        //     ))
-        // } catch (e: Exception) {
-        //     // Some devices don't support this intent
-        //     waitingFor = ""
-        //     proceedAfterBattery()
-        // }
     }
 
     private fun proceedAfterBattery() {
