@@ -34,7 +34,6 @@
         android:textSize="14sp"
         android:textStyle="bold"
         android:textColor="#FFFFFF"
-        android:background="@drawable/bg_button_green"
         android:stateListAnimator="@null"/>
 
 </LinearLayout>
