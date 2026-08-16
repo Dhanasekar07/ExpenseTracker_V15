@@ -13,6 +13,7 @@ import android.widget.LinearLayout
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import android.app.AlertDialog
 
 class PermissionsActivity : AppCompatActivity() {
 
@@ -108,34 +109,35 @@ class PermissionsActivity : AppCompatActivity() {
             arrayOf(Manifest.permission.RECEIVE_SMS, Manifest.permission.READ_SMS),
             SMS_REQUEST_CODE
         )
-        // Sideloaded apps can't get SMS popup — go to Settings
-        waitingFor = "sms_settings"
-        AlertDialog.Builder(this, android.R.style.Theme_DeviceDefault_Dialog)
-            .setTitle("SMS Permission")
-            .setMessage("Allow Expense Tracker to read SMS messages to detect payment transactions.")
-            .setCancelable(false)
-            .setPositiveButton("Go to Settings") { _, _ ->
-                startActivity(Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
-                    data = Uri.parse("package:$packageName")
-                })
-            }
-            .show()
+        
+        // Sideloaded apps can't get SMS popup — go to Settings - OLD CODE
+        // waitingFor = "sms_settings"
+        // AlertDialog.Builder(this, android.R.style.Theme_DeviceDefault_Dialog)
+        //     .setTitle("SMS Permission")
+        //     .setMessage("Allow Expense Tracker to read SMS messages to detect payment transactions.")
+        //     .setCancelable(false)
+        //     .setPositiveButton("Go to Settings") { _, _ ->
+        //         startActivity(Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
+        //             data = Uri.parse("package:$packageName")
+        //         })
+        //     }
+        //     .show()
 
-        // If already denied once or permanently denied, go to app settings
-        if (!ActivityCompat.shouldShowRequestPermissionRationale(
-                this, Manifest.permission.READ_SMS)) {
-            waitingFor = "sms_settings"
-            startActivity(Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
-                data = Uri.parse("package:$packageName")
-            })
-            return
-        }
+        // // If already denied once or permanently denied, go to app settings
+        // if (!ActivityCompat.shouldShowRequestPermissionRationale(
+        //         this, Manifest.permission.READ_SMS)) {
+        //     waitingFor = "sms_settings"
+        //     startActivity(Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
+        //         data = Uri.parse("package:$packageName")
+        //     })
+        //     return
+        // }
 
-        ActivityCompat.requestPermissions(
-            this,
-            arrayOf(Manifest.permission.RECEIVE_SMS, Manifest.permission.READ_SMS),
-            SMS_REQUEST_CODE
-        )
+        // ActivityCompat.requestPermissions(
+        //     this,
+        //     arrayOf(Manifest.permission.RECEIVE_SMS, Manifest.permission.READ_SMS),
+        //     SMS_REQUEST_CODE
+        // )
     }
 
     override fun onRequestPermissionsResult(
@@ -167,7 +169,6 @@ class PermissionsActivity : AppCompatActivity() {
     }
 
     private fun proceedAfterSms() {
-        if (!isNotifGranted()) requestNotifListener()
         else if (!isOverlayGranted()) requestOverlay()
         else if (!isBatteryExempt()) requestBattery()
         else goToMain()
