@@ -59,6 +59,7 @@ class PermissionsActivity : AppCompatActivity() {
                 waitingFor = ""
                 refreshChecks()
                 if (isSmsGranted()) proceedAfterSms()
+                else showSmsSettingsDialog()
             }
             "notif" -> {
                 waitingFor = ""
@@ -101,9 +102,27 @@ class PermissionsActivity : AppCompatActivity() {
             proceedAfterSms()
             return
         }
+        // Try system popup first
+        ActivityCompat.requestPermissions(
+            this,
+            arrayOf(Manifest.permission.RECEIVE_SMS, Manifest.permission.READ_SMS),
+            SMS_REQUEST_CODE
+        )
+        // Sideloaded apps can't get SMS popup — go to Settings
+        waitingFor = "sms_settings"
+        AlertDialog.Builder(this, android.R.style.Theme_DeviceDefault_Dialog)
+            .setTitle("SMS Permission")
+            .setMessage("Allow Expense Tracker to read SMS messages to detect payment transactions.")
+            .setCancelable(false)
+            .setPositiveButton("Go to Settings") { _, _ ->
+                startActivity(Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
+                    data = Uri.parse("package:$packageName")
+                })
+            }
+            .show()
 
         // If already denied once or permanently denied, go to app settings
-        if (smsDeniedOnce || !ActivityCompat.shouldShowRequestPermissionRationale(
+        if (!ActivityCompat.shouldShowRequestPermissionRationale(
                 this, Manifest.permission.READ_SMS)) {
             waitingFor = "sms_settings"
             startActivity(Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
@@ -128,9 +147,23 @@ class PermissionsActivity : AppCompatActivity() {
             if (grantResults.all { it == PackageManager.PERMISSION_GRANTED }) {
                 proceedAfterSms()
             } else {
-                smsDeniedOnce = true
+                showSmsSettingsDialog()
             }
         }
+    }
+
+    private fun showSmsSettingsDialog() {
+        AlertDialog.Builder(this, android.R.style.Theme_DeviceDefault_Dialog)
+            .setTitle("SMS Permission")
+            .setMessage("Allow Expense Tracker to read SMS messages to detect payment transactions.")
+            .setCancelable(false)
+            .setPositiveButton("Go to Settings") { _, _ ->
+                waitingFor = "sms_settings"
+                startActivity(Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
+                    data = Uri.parse("package:$packageName")
+                })
+            }
+            .show()
     }
 
     private fun proceedAfterSms() {
@@ -186,17 +219,36 @@ class PermissionsActivity : AppCompatActivity() {
             proceedAfterBattery()
             return
         }
-        waitingFor = "battery"
-        try {
-            startActivity(Intent(
-                Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS,
-                Uri.parse("package:$packageName")
-            ))
-        } catch (e: Exception) {
-            // Some devices don't support this intent
-            waitingFor = ""
-            proceedAfterBattery()
-        }
+        AlertDialog.Builder(this, android.R.style.Theme_DeviceDefault_Dialog)
+            .setTitle("Battery Optimization")
+            .setMessage("Allow Expense Tracker to run in the background to keep tracking payments.")
+            .setCancelable(false)
+            .setPositiveButton("Allow") { _, _ ->
+                waitingFor = "battery"
+                try {
+                    startActivity(Intent(
+                        Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS,
+                        Uri.parse("package:$packageName")
+                    ))
+                } catch (e: Exception) {
+                    waitingFor = ""
+                    proceedAfterBattery()
+                }
+            }
+            .show()
+            
+        //    Commented Older Code
+        // waitingFor = "battery"
+        // try {
+        //     startActivity(Intent(
+        //         Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS,
+        //         Uri.parse("package:$packageName")
+        //     ))
+        // } catch (e: Exception) {
+        //     // Some devices don't support this intent
+        //     waitingFor = ""
+        //     proceedAfterBattery()
+        // }
     }
 
     private fun proceedAfterBattery() {
