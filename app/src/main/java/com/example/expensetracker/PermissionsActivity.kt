@@ -171,18 +171,26 @@ class PermissionsActivity : AppCompatActivity() {
             android.view.WindowManager.LayoutParams.WRAP_CONTENT
         )
 
-        // Center title
-        val titleView = dialog.findViewById<TextView>(android.R.id.title)
-        titleView?.gravity = android.view.Gravity.CENTER
-    
-        // Center message
-        val messageView = dialog.findViewById<TextView>(android.R.id.message)
-        messageView?.gravity = android.view.Gravity.CENTER
-    
-        // Center and style button
-        val btn = dialog.getButton(AlertDialog.BUTTON_POSITIVE)
-        btn?.setTextColor(android.graphics.Color.WHITE)
-        (btn?.parent as? android.widget.LinearLayout)?.gravity = android.view.Gravity.CENTER
+        dialog.window?.decorView?.post {
+            // Center title — change parent's gravity too
+            val titleView = dialog.findViewById<TextView>(android.R.id.title)
+            titleView?.gravity = android.view.Gravity.CENTER
+            titleView?.textAlignment = android.view.View.TEXT_ALIGNMENT_CENTER
+            (titleView?.parent as? android.widget.LinearLayout)?.gravity = android.view.Gravity.CENTER
+        
+            // Center message
+            val messageView = dialog.findViewById<TextView>(android.R.id.message)
+            messageView?.gravity = android.view.Gravity.CENTER
+            messageView?.textAlignment = android.view.View.TEXT_ALIGNMENT_CENTER
+        
+            // Center button — find the button bar
+            val btn = dialog.getButton(AlertDialog.BUTTON_POSITIVE)
+            btn?.setTextColor(android.graphics.Color.WHITE)
+            // Try parent and grandparent
+            (btn?.parent as? android.widget.LinearLayout)?.gravity = android.view.Gravity.CENTER
+            (btn?.parent?.parent as? android.widget.LinearLayout)?.gravity = android.view.Gravity.CENTER
+        }
+        
     }
 
     private fun proceedAfterSms() {
