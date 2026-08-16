@@ -47,8 +47,8 @@
 
             <ImageView
                 android:id="@+id/iconSms"
-                android:layout_width="32dp"
-                android:layout_height="36dp"
+                android:layout_width="26dp"
+                android:layout_height="28dp"
                 android:src="@drawable/ic_sms_perm"
                 android:layout_marginEnd="14dp"/>
 
@@ -117,8 +117,8 @@
 
             <ImageView
                 android:id="@+id/iconOverlay"
-                android:layout_width="24dp"
-                android:layout_height="30dp"
+                android:layout_width="21dp"
+                android:layout_height="27dp"
                 android:src="@drawable/ic_overlay"
                 android:layout_marginEnd="14dp"/>
 
@@ -184,8 +184,8 @@
 
             <ImageView
                 android:id="@+id/iconBattery"
-                android:layout_width="24dp"
-                android:layout_height="36dp"
+                android:layout_width="20dp"
+                android:layout_height="44dp"
                 android:src="@drawable/ic_battery_perm"
                 android:layout_marginEnd="14dp"/>
 
