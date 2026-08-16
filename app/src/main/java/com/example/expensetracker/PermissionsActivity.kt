@@ -16,6 +16,7 @@ import androidx.core.content.ContextCompat
 import android.app.AlertDialog
 import android.widget.TextView
 
+
 class PermissionsActivity : AppCompatActivity() {
 
     companion object {
@@ -147,17 +148,17 @@ class PermissionsActivity : AppCompatActivity() {
     }
 
     private fun showSmsSettingsDialog() {
-        val view = layoutInflater.inflate(R.layout.dialog_permission, null)
-        view.findViewById<TextView>(R.id.dialogTitle).text = "SMS Permission"
-        view.findViewById<TextView>(R.id.dialogMessage).text =
+        val view: android.view.View = layoutInflater.inflate(R.layout.dialog_permission, null)
+        (view.findViewById(R.id.dialogTitle) as TextView).text = "SMS Permission"
+        (view.findViewById(R.id.dialogMessage) as TextView).text =
             "Allow Expense Tracker to read SMS messages to detect payment transactions."
     
         val dialog = AlertDialog.Builder(this, android.R.style.Theme_DeviceDefault_Dialog)
-            .setView(view)
+            .setView(view as android.view.View)
             .setCancelable(false)
             .create()
     
-        view.findViewById<Button>(R.id.dialogButton).setOnClickListener {
+        (view.findViewById(R.id.dialogButton) as Button).setOnClickListener {
             waitingFor = "sms_settings"
             dialog.dismiss()
             startActivity(Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
