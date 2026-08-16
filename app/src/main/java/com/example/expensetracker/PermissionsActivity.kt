@@ -26,7 +26,6 @@ class PermissionsActivity : AppCompatActivity() {
     private var waitingFor = ""
 
     private lateinit var checkSms: ImageView
-    private lateinit var checkNotif: ImageView
     private lateinit var checkOverlay: ImageView
     private lateinit var checkBattery: ImageView
     private lateinit var btnContinue: Button
@@ -36,14 +35,12 @@ class PermissionsActivity : AppCompatActivity() {
         setContentView(R.layout.activity_permissions)
 
         checkSms     = findViewById(R.id.checkSms)
-        checkNotif   = findViewById(R.id.checkNotif)
         checkOverlay = findViewById(R.id.checkOverlay)
         checkBattery = findViewById(R.id.checkBattery)
         btnContinue  = findViewById(R.id.btnContinue)
 
         // Set click listeners on each row for manual re-grant
         findViewById<LinearLayout>(R.id.permSms).setOnClickListener { requestSms() }
-        findViewById<LinearLayout>(R.id.permNotif).setOnClickListener { requestNotifListener() }
         findViewById<LinearLayout>(R.id.permOverlay).setOnClickListener { showOverlayDialog() }
         findViewById<LinearLayout>(R.id.permBattery).setOnClickListener { requestBattery() }
 
@@ -156,7 +153,7 @@ class PermissionsActivity : AppCompatActivity() {
     }
 
     private fun showSmsSettingsDialog() {
-        AlertDialog.Builder(this, android.R.style.Theme_DeviceDefault_Dialog)
+        val dialog = AlertDialog.Builder(this, android.R.style.Theme_DeviceDefault_Dialog)
             .setTitle("SMS Permission")
             .setMessage("Allow Expense Tracker to read SMS messages to detect payment transactions.")
             .setCancelable(false)
@@ -261,7 +258,7 @@ class PermissionsActivity : AppCompatActivity() {
             proceedAfterBattery()
             return
         }
-        AlertDialog.Builder(this, android.R.style.Theme_DeviceDefault_Dialog)
+        val dialog = AlertDialog.Builder(this, android.R.style.Theme_DeviceDefault_Dialog)
             .setTitle("Battery Optimization")
             .setMessage("Allow Expense Tracker to run in the background to keep tracking payments.")
             .setCancelable(false)
@@ -342,7 +339,6 @@ class PermissionsActivity : AppCompatActivity() {
 
     private fun refreshChecks() {
         setCheck(checkSms, isSmsGranted())
-        setCheck(checkNotif, isNotifGranted())
         setCheck(checkOverlay, isOverlayGranted())
         setCheck(checkBattery, isBatteryExempt())
 
