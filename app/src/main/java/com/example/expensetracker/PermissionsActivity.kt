@@ -14,6 +14,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import android.app.AlertDialog
+import android.widget.TextView
 
 class PermissionsActivity : AppCompatActivity() {
 
@@ -43,7 +44,7 @@ class PermissionsActivity : AppCompatActivity() {
         // Set click listeners on each row for manual re-grant
         findViewById<LinearLayout>(R.id.permSms).setOnClickListener { requestSms() }
         findViewById<LinearLayout>(R.id.permNotif).setOnClickListener { requestNotifListener() }
-        findViewById<LinearLayout>(R.id.permOverlay).setOnClickListener { requestOverlay() }
+        findViewById<LinearLayout>(R.id.permOverlay).setOnClickListener { showOverlayDialog() }
         findViewById<LinearLayout>(R.id.permBattery).setOnClickListener { requestBattery() }
 
         btnContinue.setOnClickListener { startSequentialGrant() }
@@ -87,7 +88,7 @@ class PermissionsActivity : AppCompatActivity() {
         when {
             !isSmsGranted()     -> requestSms()
             !isNotifGranted()   -> requestNotifListener()
-            !isOverlayGranted() -> requestOverlay()
+            !isOverlayGranted() -> showOverlayDialog()
             !isBatteryExempt()  -> requestBattery()
             else                -> goToMain()
         }
@@ -166,10 +167,29 @@ class PermissionsActivity : AppCompatActivity() {
                 })
             }
             .show()
+
+        // Increase width
+        dialog.window?.setLayout(
+            (resources.displayMetrics.widthPixels * 0.90).toInt(),
+            android.view.WindowManager.LayoutParams.WRAP_CONTENT
+        )
+
+        // Center title
+        val titleView = dialog.findViewById<TextView>(android.R.id.title)
+        titleView?.gravity = android.view.Gravity.CENTER
+    
+        // Center message
+        val messageView = dialog.findViewById<TextView>(android.R.id.message)
+        messageView?.gravity = android.view.Gravity.CENTER
+    
+        // Center and style button
+        val btn = dialog.getButton(AlertDialog.BUTTON_POSITIVE)
+        btn?.setTextColor(android.graphics.Color.WHITE)
+        (btn?.parent as? android.widget.LinearLayout)?.gravity = android.view.Gravity.CENTER
     }
 
     private fun proceedAfterSms() {
-        if (!isOverlayGranted()) requestOverlay()
+        if (!isOverlayGranted()) showOverlayDialog()
         else if (!isBatteryExempt()) requestBattery()
         else goToMain()
     }
@@ -187,26 +207,47 @@ class PermissionsActivity : AppCompatActivity() {
     }
 
     private fun proceedAfterNotif() {
-        if (!isOverlayGranted()) requestOverlay()
+        if (!isOverlayGranted()) showOverlayDialog()
         else if (!isBatteryExempt()) requestBattery()
         else goToMain()
     }
 
     // ── Overlay (opens Settings) ────────────────────────────────────────
 
-    private fun requestOverlay() {
+    private fun showOverlayDialog() {
         if (isOverlayGranted()) {
             refreshChecks()
             proceedAfterOverlay()
             return
         }
-        waitingFor = "overlay"
-        startActivity(Intent(
-            Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
-            Uri.parse("package:$packageName")
-        ))
+        val dialog = AlertDialog.Builder(this, android.R.style.Theme_DeviceDefault_Dialog)
+            .setTitle("Display Over Other Apps")
+            .setMessage("Allow Expense Tracker to display over other apps to show the category popup after payments.")
+            .setCancelable(false)
+            .setPositiveButton("Go to Settings") { _, _ ->
+                waitingFor = "overlay"
+                startActivity(Intent(
+                    Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
+                    Uri.parse("package:$packageName")
+                ))
+            }
+            .show()
+    
+        dialog.window?.setLayout(
+            (resources.displayMetrics.widthPixels * 0.90).toInt(),
+            android.view.WindowManager.LayoutParams.WRAP_CONTENT
+        )
+    
+        val titleView = dialog.findViewById<TextView>(android.R.id.title)
+        titleView?.gravity = android.view.Gravity.CENTER
+    
+        val messageView = dialog.findViewById<TextView>(android.R.id.message)
+        messageView?.gravity = android.view.Gravity.CENTER
+    
+        val btn = dialog.getButton(AlertDialog.BUTTON_POSITIVE)
+        btn?.setTextColor(android.graphics.Color.WHITE)
+        (btn?.parent as? android.widget.LinearLayout)?.gravity = android.view.Gravity.CENTER
     }
-
     private fun proceedAfterOverlay() {
         if (!isBatteryExempt()) requestBattery()
         else goToMain()
@@ -237,6 +278,25 @@ class PermissionsActivity : AppCompatActivity() {
                 }
             }
             .show()
+
+        // Increase width
+        dialog.window?.setLayout(
+            (resources.displayMetrics.widthPixels * 0.90).toInt(),
+            android.view.WindowManager.LayoutParams.WRAP_CONTENT
+        )
+
+        // Center title
+        val titleView = dialog.findViewById<TextView>(android.R.id.title)
+        titleView?.gravity = android.view.Gravity.CENTER
+    
+        // Center message
+        val messageView = dialog.findViewById<TextView>(android.R.id.message)
+        messageView?.gravity = android.view.Gravity.CENTER
+    
+        // Center and style button
+        val btn = dialog.getButton(AlertDialog.BUTTON_POSITIVE)
+        btn?.setTextColor(android.graphics.Color.WHITE)
+        (btn?.parent as? android.widget.LinearLayout)?.gravity = android.view.Gravity.CENTER
             
         //    Commented Older Code
         // waitingFor = "battery"
